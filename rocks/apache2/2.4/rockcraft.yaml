@@ -1,0 +1,49 @@
+# rockcraft.yaml
+# This file defines how to build a Rock (OCI container) using Rockcraft.
+# It specifies metadata, build-time dependencies, and the steps needed to assemble the final image.
+# For full documentation and examples, see: https://documentation.ubuntu.com/rockcraft/en/stable/
+#
+# Rockcraft enables consistent, reproducible container builds aligned with Ubuntu images and tooling.
+# This file is the heart of your Rock project — edit it to customize your container’s behavior and contents.
+
+
+# Metadata section
+name: apache2
+summary: Apache, a secure & extensible open-source HTTP server. Long-term tracks maintained by Canonical.
+description: |
+  The Apache HTTP Server Project's goal is to build a secure, efficient and
+  extensible HTTP server as standards-compliant open source software. 
+  The result has long been the number one web server on the Internet.
+
+version: "2.4"
+# TODO: make it baseless
+base: ubuntu@24.04
+platforms: # The set of architecture-specific rocks to be built
+  amd64:
+  # arm64:
+  # armhf:
+  # i386:
+  # ppc64el:
+  # riscv64:
+  # s390x:
+
+# Parts section
+parts: 
+  apache2:
+    plugin: nil
+    # TODO: need maintainer scripts? Get these sliced
+    overlay-packages:
+      - apache2
+      - tzdata
+
+environment: 
+  APACHE_RUN_DIR: /var/run/apache2
+
+# TODO: make it rootless
+# run-user: _daemon_
+
+services:
+  apachectl:
+    override: replace
+    command: apachectl [ -k start -DFOREGROUND ]
+    startup: enabled
